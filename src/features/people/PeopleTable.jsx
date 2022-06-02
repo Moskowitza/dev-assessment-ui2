@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
 import {
   Grid,
   Paper,
@@ -8,12 +8,21 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableBody
-} from '@mui/material'
-import { useGetPeopleQuery } from '../../app/services/api'
+  TableBody,
+} from '@mui/material';
+import {
+  useGetPeopleQuery,
+  useGetPersonalQuoteQuery,
+} from '../../app/services/api';
+import PeopleTableRow from './PeopleTableRow';
 
-export default function PeopleTable () {
-  const { data, loading, error } = useGetPeopleQuery()
+export default function PeopleTable() {
+  const { data, loading, error } = useGetPeopleQuery();
+
+  const [peopleData, setPeopleData] = useState([]);
+  useEffect(() => {
+    setPeopleData(data);
+  }, [data]);
 
   // TODO: show loading indicator
   if (loading) {
@@ -34,13 +43,25 @@ export default function PeopleTable () {
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
-            <TableRow>{/* TODO Create A Header Row */}</TableRow>
+            <TableRow>
+              <TableCell>id</TableCell>
+              <TableCell>First Name</TableCell>
+              <TableCell>Last Name</TableCell>
+              <TableCell>Description</TableCell>
+              <TableCell>Level</TableCell>
+            </TableRow>
           </TableHead>
-          <TableBody >
-            {/* TODO map over our data to create a table body */}
+          <TableBody>
+            {!peopleData ? (
+              <></>
+            ) : (
+              peopleData.map((person) => (
+                <PeopleTableRow person={person} key={person.id} />
+              ))
+            )}
           </TableBody>
         </Table>
       </TableContainer>
     </Grid>
-  )
+  );
 }
